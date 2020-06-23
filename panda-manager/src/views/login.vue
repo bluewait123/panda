@@ -5,14 +5,10 @@
             <Card title="欢迎登录" shadow>
                 <Form ref="loginForm" :model="info" :rules="rule" inline @keydown.enter.native="requestLogin">
                     <FormItem class="form_item" prop="mobile">
-                        <Input type="text" size="large" v-model="info.mobile" placeholder="请输入手机号" maxlength="11">
-                            <Icon type="ios-person-outline" slot="prepend"></Icon>
-                        </Input>
+                        <Input prefix="ios-contact-outline" type="text" size="large" v-model="info.mobile" placeholder="请输入手机号" maxlength="11" />
                     </FormItem>
                     <FormItem class="form_item" prop="password">
-                        <Input type="password" size="large" v-model="info.password" placeholder="请输入用户密码">
-                            <Icon type="ios-lock-outline" slot="prepend"></Icon>
-                        </Input>
+                        <Input prefix="ios-lock-outline" type="password" size="large" v-model="info.password" placeholder="请输入用户密码" />
                     </FormItem>
                     <FormItem class="form_item">
                         <Button long type="primary" @click="login()">登录</Button>
@@ -32,10 +28,11 @@ export default {
         return {
             info: {
                 mobile: '',
-                password: ''
+                password: '',
+                rememberPassword: false,
             },
             rule: {
-                user: [
+                mobile: [
                     { required: true, validator: this.$rule.phone, trigger: 'blur' }
                 ],
                 password: [
@@ -99,6 +96,6 @@ export default {
     }
 
     .form_item{
-        width: 90%;
+        width: 100%;
     }
 </style>
