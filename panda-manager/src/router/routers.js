@@ -41,6 +41,15 @@ export default [
                 }
             },
             {
+                path: '/note_type',
+                name: 'note_type',
+                component: () => import('@/views/note/type/list.vue'),
+                meta: {
+                    title: '笔记种类配置',
+                    keepAlive: true
+                }
+            },
+            {
                 path: '/note_add',
                 name: 'note_add',
                 component: () => import('@/views/note/add.vue'),

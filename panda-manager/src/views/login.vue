@@ -4,8 +4,8 @@
         <div class="login_box">
             <Card title="欢迎登录" shadow>
                 <Form ref="loginForm" :model="info" :rules="rule" inline @keydown.enter.native="requestLogin">
-                    <FormItem class="form_item" prop="mobile">
-                        <Input prefix="ios-contact-outline" type="text" size="large" v-model="info.mobile" placeholder="请输入手机号" maxlength="11" />
+                    <FormItem class="form_item" prop="userName">
+                        <Input prefix="ios-contact-outline" type="text" size="large" v-model="info.userName" placeholder="请输入用户名" maxlength="25" />
                     </FormItem>
                     <FormItem class="form_item" prop="password">
                         <Input prefix="ios-lock-outline" type="password" size="large" v-model="info.password" placeholder="请输入用户密码" />
@@ -27,13 +27,14 @@ export default {
     data () {
         return {
             info: {
-                mobile: '',
+                userName: '',
                 password: '',
                 rememberPassword: false,
             },
             rule: {
-                mobile: [
-                    { required: true, validator: this.$rule.phone, trigger: 'blur' }
+                userName:[
+                    { required: true, message: '用户名不能为空!', trigger: 'blur' },
+                    { type: 'string', min: 5, message: '用户名长度需5位字符以上!', trigger: 'blur' }
                 ],
                 password: [
                     { required: true, message: '用户密码不能为空!', trigger: 'blur' },
@@ -46,13 +47,13 @@ export default {
         login() {
             this.$refs['loginForm'].validate((valid) => {
                 if (valid) {
-                    const mobile = this.info.mobile
-                    const encryptionPwd = md5.getMD5BySalt(this.info.password,mobile)
+                    const userName = this.info.userName
+                    const encryptionPwd = md5.getMD5BySalt(this.info.password,userName)
                     const reqData = {
-                        mobile: mobile,
+                        userName: userName,
                         pwd: encryptionPwd
                     }
-                    this.$http.post('/login', reqData).then(resp => {
+                    this.$http.post('/system/login', reqData).then(resp => {
                         localStorage.clear()
                         const respData = resp.data.data
                         this.setCache(respData)

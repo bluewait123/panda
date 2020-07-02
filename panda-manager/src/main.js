@@ -7,6 +7,8 @@ import 'view-design/dist/styles/iview.css'
 import axios from './utils/axios'
 import x2js from 'x2js' //xml数据处理插件
 import rule from './utils/rule'
+import enums from './constant/enums'
+import './index.less'
 
 Vue.config.productionTip = false
 
@@ -17,6 +19,7 @@ Vue.use(ViewUI)
 Vue.prototype.$http = axios
 Vue.prototype.$x2js = new x2js()
 Vue.prototype.$rule = rule
+Vue.prototype.$enums = enums
 
 new Vue({
   router,

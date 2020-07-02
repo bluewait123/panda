@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "dev": "vue-cli-service serve",
+    "dev": "vue-cli-service serve --open",
+    "debug": "npm run dev --proxydev",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "test": "vue-cli-service build --mode test"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "crypto": "^1.0.1",
+    "mavon-editor": "^2.9.0",
     "view-design": "^4.2.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",

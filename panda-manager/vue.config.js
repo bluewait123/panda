@@ -26,8 +26,8 @@ const config = {
 if (process.env.npm_config_proxydev) {
     config.devServer.proxy = {
         '/mock': {
-            // target: 'http://127.0.0.1:19091/',
-            target: 'http://127.0.0.1:8080/',
+            target: 'http://127.0.0.1:12301/boss/',
+            // target: 'http://127.0.0.1:8080/',
             changeOrigin: true,
             pathRewrite: {
                 '^/mock': ''

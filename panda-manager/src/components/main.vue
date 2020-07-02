@@ -110,7 +110,7 @@ export default {
     },
     methods : {
         loadMenu () {
-            this.$http.post('/common/resource/list', {}).then(res => {
+            this.$http.get('/system/common/menus', {}).then(res => {
                 let menusList = {}
                 res.data.data.list.forEach((item,index,arr) => {
                     if(item.parentId === '0'){

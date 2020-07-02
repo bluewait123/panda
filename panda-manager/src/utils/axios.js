@@ -9,7 +9,7 @@ Axios.defaults.baseURL = process.env.VUE_APP_BASEURL
 Axios.interceptors.request.use(config => {
     // 这地方可以设置公共的http headers
     config.headers = {
-        
+        token: localStorage.getItem('token')
     }
 
     // 这里也可以打开loading
@@ -25,9 +25,9 @@ Axios.interceptors.request.use(config => {
 Axios.interceptors.response.use(
 response => {
     // 对响应数据做点什么
-    if (response.data.respCode && response.data.respCode !== '0000') {
+    if (response.data.code && response.data.code !== '0000') {
         Vue.prototype.$Loading.error()
-        Vue.prototype.$Message.error(response.data.respDesc)
+        Vue.prototype.$Message.error('[' + response.data.system + '-' + response.data.code + '] ' + response.data.msg)
         return Promise.reject(response.data)
     }
     Vue.prototype.$Loading.finish()
