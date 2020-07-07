@@ -1,5 +1,7 @@
 import Axios from 'axios'
 import Vue from 'vue'
+import router from '@/router'
+import enums from '@/constant/enums'
 
 // 配置基础URL
 Axios.defaults.baseURL = process.env.VUE_APP_BASEURL
@@ -27,6 +29,9 @@ response => {
     // 对响应数据做点什么
     if (response.data.code && response.data.code !== '0000') {
         Vue.prototype.$Loading.error()
+        if(enums.RELOGIN_CODE[response.data.code] != undefined){
+            router.replace({ name: 'login' })
+        }
         Vue.prototype.$Message.error('[' + response.data.system + '-' + response.data.code + '] ' + response.data.msg)
         return Promise.reject(response.data)
     }

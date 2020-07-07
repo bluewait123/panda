@@ -20,17 +20,17 @@
                 <Sider>
                     <Menu ref="side_menu" theme="dark" width="auto" :active-name="activeName" :open-names="openNames" @on-select="toPage">
                         <template v-for="(val,key) in menus" >
-                            <MenuItem v-if="!val.childs" :name="val.routerUrl" :key="key">
+                            <MenuItem v-if="!val.childs && val.menuType == '1'" :name="val.routerUrl" :key="key">
                                 <Icon :type="val.icon"></Icon>
                                 <span>{{val.name}}</span>
                             </MenuItem>
-                            <Submenu v-if="val.childs" :name="val.routerUrl" :key="val.id">
+                            <Submenu v-if="val.childs && val.menuType == '1'" :name="val.routerUrl" :key="val.id">
                                 <template slot="title">
                                     <Icon :type="val.icon"></Icon>
                                     <span>{{val.name}}</span>
                                 </template>
                                 <template v-for="(cval,ckey) in val.childs">
-                                    <MenuItem :name="cval.routerUrl" :key="cval.id">
+                                    <MenuItem v-if="cval.menuType == '1'" :name="cval.routerUrl" :key="cval.id">
                                         <Icon :type="cval.icon"></Icon>
                                         <span>{{cval.name}}</span>
                                     </MenuItem>
@@ -124,7 +124,6 @@ export default {
                             menusList[item.id] = item
                         }
                     }
-
                     let {...cloneItem} = item
                     this.list[item.routerUrl] = cloneItem
                 })
@@ -147,9 +146,11 @@ export default {
             const currnetUrl = this.$router.currentRoute.name
             const item = this.list[currnetUrl]
             this.activeName = currnetUrl
-            if(item.parentId !== '0'){
+            if(item && item.parentId !== '0'){
                 const pItem = this.menus[item.parentId]
-                this.openNames.push(pItem.routerUrl)
+                if(pItem){
+                    this.openNames.push(pItem.routerUrl)
+                }
             }
 
         },

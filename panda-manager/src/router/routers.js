@@ -50,9 +50,27 @@ export default [
                 }
             },
             {
-                path: '/note_add',
-                name: 'note_add',
-                component: () => import('@/views/note/add.vue'),
+                path: '/note_data',
+                name: 'note_data',
+                component: () => import('@/views/note/data/list.vue'),
+                meta: {
+                    title: '笔记管理',
+                    keepAlive: true
+                }
+            },
+            {
+                path: '/note_data_query',
+                name: 'note_data_query',
+                component: () => import('@/views/note/data/query.vue'),
+                meta: {
+                    title: '笔记高级查询',
+                    keepAlive: true
+                }
+            },
+            {
+                path: '/note_data_add',
+                name: 'note_data_add',
+                component: () => import('@/views/note/data/add.vue'),
                 meta: {
                     title: '新增笔记',
                     keepAlive: true

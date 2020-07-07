@@ -25,8 +25,24 @@ const config = {
 
 if (process.env.npm_config_proxydev) {
     config.devServer.proxy = {
-        '/mock': {
+        // '/mock': {
+        //     target: 'http://127.0.0.1:12301/boss/',
+        //     // target: 'http://127.0.0.1:8080/',
+        //     changeOrigin: true,
+        //     pathRewrite: {
+        //         '^/mock': ''
+        //     }
+        // }
+        '/mock/system': {
             target: 'http://127.0.0.1:12301/boss/',
+            // target: 'http://127.0.0.1:8080/',
+            changeOrigin: true,
+            pathRewrite: {
+                '^/mock': ''
+            }
+        },
+        '/mock/note': {
+            target: 'http://127.0.0.1:12302/boss/',
             // target: 'http://127.0.0.1:8080/',
             changeOrigin: true,
             pathRewrite: {

@@ -3,7 +3,7 @@
         <!--  -->
         <div class="login_box">
             <Card title="欢迎登录" shadow>
-                <Form ref="loginForm" :model="info" :rules="rule" inline @keydown.enter.native="requestLogin">
+                <Form ref="loginForm" :model="info" :rules="rule" inline @keydown.enter.native="login">
                     <FormItem class="form_item" prop="userName">
                         <Input prefix="ios-contact-outline" type="text" size="large" v-model="info.userName" placeholder="请输入用户名" maxlength="25" />
                     </FormItem>
