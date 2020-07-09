@@ -43,14 +43,17 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import html2canvas from 'html2canvas'
 
 export default {
     name: 'note_add',
     components: {
         mavonEditor,
+        html2canvas,
     },
     data() {
         return {
+            screenImageData: '',
             form:{
                 title: '',
                 tags: [],
@@ -102,6 +105,9 @@ export default {
     },
     created () {
         this.queryNoteType()
+        this.$nextTick(() => {
+            window.scrollTo(0,0)
+        });
     },
     methods: {
         // 所有操作都会被解析重新渲染
@@ -168,19 +174,41 @@ export default {
                     return;
                 }
                 
-                const reqData = {
-                    noteType: this.form.type,
-                    title: this.form.title,
-                    tags: this.form.tags.toString(),
-                    data: this.form.content,
-                    html: this.form.html
-                }
+                // 上传截图
+                // html2canvas只能将当前可视化部分截图，设置滚动条恢复初始位置
+                window.scrollTo(0,0)
+                // 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
+                html2canvas(document.getElementsByClassName("v-note-show")[0], {
+                    backgroundColor: null,
+                    useCORS: true, // 如果截图的内容里有图片,可能会有跨域的情况,加上这个参数,解决文件跨域问题
+                    // width: window.screen.availWidth,
+                    // height: window.screen.availHeight,
+                    // windowWidth: document.body.scrollWidth,
+                    // windowHeight: document.body.scrollHeight,
+                    // x: 0,
+                    // y: window.pageYOffset
+                }).then((canvas) => {
+                    let url = canvas.toDataURL('image/png');
+                    this.screenImageData = url;
+                    this.$http.post('/file/image/upload/base64', {
+                        files: [url]
+                    }).then(resp => {
+                        const reqData = {
+                            noteType: this.form.type,
+                            title: this.form.title,
+                            tags: this.form.tags.toString(),
+                            data: this.form.content,
+                            screenImageId: resp.data.data[0]
+                        }
 
-                this.$http.post('/note/data/add', reqData).then(resp => {
-                    this.$Message.success('保存成功!')
+                        this.$http.post('/note/data/add', reqData).then(resp => {
+                            this.$Message.success('保存成功!')
+                            this.$router.push({ name: 'note_data', params: {operType: 'removeTag'} })
+                        })
+                    })
                 })
             })
-        }
+        },
     }
 }
 </script>

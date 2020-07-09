@@ -3,7 +3,7 @@
         <Button @click="moveLeft" size="small" class="btn move_btn" icon="ios-arrow-back"></Button>
         <div class="tags_box" ref="tagsBox">
             <div class="tags_box_body" ref="tagsBoxBody" :style="{left : left + 'px'}">
-                <Tag v-for="(item,index) in tagList" :name="item.routerUrl" :key="index" class="tag" type="dot" :closable="Object.keys(tagList).length > 1" :color="item.color" @on-close="closeTag">
+                <Tag v-for="(item,index) in tagList" :name="item.routerUrl" :key="index" class="tag" type="dot" :closable="Object.keys(tagList).length > 1" :color="item.color" @on-close="closeTag" @click.native="selected(item)">
                     {{item.name}}
                 </Tag>
             </div>
@@ -32,7 +32,7 @@ export default {
         return {
             left : 0,
             tagList: {},
-            tagArray: []
+            tagSortArray: []
         }
     },
     props: {
@@ -71,8 +71,14 @@ export default {
             },
         },
         $route(to,from){
-            if(to.name !== from.name && 'closeTag' !== to.params.operType){
-                this.addTag(to.name,from.name)
+            if(to.name === from.name || 'closeTag' === to.params.operType){
+                return;
+            }
+            this.addTag(to.name,from.name)
+            if('removeTag' === to.params.operType){
+                const removeItemIndex = this.tagSortArray.findIndex(item => item === from.name)
+                Vue.delete(this.tagList,from.name)
+                this.tagSortArray.splice(removeItemIndex, 1)
             }
         }
     },
@@ -84,6 +90,7 @@ export default {
                let item = tagListJson[key]
                item.color = 'default'
                this.$set(this.tagList,key,item)
+               this.addTagArray(item.routerUrl)
            }
        }
     },
@@ -101,11 +108,11 @@ export default {
             }
         },
         closeTag(event, name){
-            const removeItemIndex = this.tagArray.findIndex(item => item === name)
+            const removeItemIndex = this.tagSortArray.findIndex(item => item === name)
             Vue.delete(this.tagList,name)
-            this.tagArray.splice(removeItemIndex, 1)
+            this.tagSortArray.splice(removeItemIndex, 1)
 
-            const activiedTagName = this.tagArray[this.tagArray.length-1]
+            const activiedTagName = this.tagSortArray[this.tagSortArray.length-1]
             if(activiedTagName !== this.$router.currentRoute.name){
                 let item = this.list[activiedTagName] || E404
                 item.color = 'primary'
@@ -144,12 +151,19 @@ export default {
                 this.left -= boxOffsetWidth
             }
         },
+        /**
+         * 这个用来给TAG排序，当关闭TAG时，激活队列里最后一个TAG
+         */
         addTagArray(name){
-            const len = this.tagArray.length
-            if(len === 10){
-                this.tagArray.splice(0, 1)
+            // 删除重复的
+            const index = this.tagSortArray.indexOf(name);
+            if(index > -1){
+                this.tagSortArray.splice(index, 1);
             }
-            this.tagArray.push(name)
+            this.tagSortArray.push(name)
+        },
+        selected(item){
+            this.$router.push({ name: item.routerUrl })
         }
     }
 }

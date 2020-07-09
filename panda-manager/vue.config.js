@@ -48,7 +48,15 @@ if (process.env.npm_config_proxydev) {
             pathRewrite: {
                 '^/mock': ''
             }
-        }
+        },
+        '/mock/file': {
+            target: 'http://127.0.0.1:12401/',
+            // target: 'http://127.0.0.1:8080/',
+            changeOrigin: true,
+            pathRewrite: {
+                '^/mock': ''
+            }
+        },
     }
 }
 

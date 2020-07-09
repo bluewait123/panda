@@ -73,7 +73,7 @@ export default [
                 component: () => import('@/views/note/data/add.vue'),
                 meta: {
                     title: '新增笔记',
-                    keepAlive: true
+                    keepAlive: false
                 }
             },
             {

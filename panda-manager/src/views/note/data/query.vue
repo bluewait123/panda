@@ -8,7 +8,7 @@
                 <Row :gutter="20">
                     <Col>
                         <FormItem label="">
-                            <Input search enter-button="搜索" placeholder="请输入标题/标签/内容关键字" size="large" style="width: 90%;" @on-search="queryNoteData(1)" />
+                            <Input v-model="query.keyword" search enter-button="搜索" placeholder="请输入标题/标签/内容关键字" size="large" style="width: 90%;" @on-search="queryNoteData(1)" />
                         </FormItem>
                     </Col>
                 </Row>
@@ -24,9 +24,9 @@
                     </Col>
                 </Row>
                 <Row>
-                    <Col>
+                    <Col >
                         <FormItem label="创建日期">
-                            <DatePicker type="datetimerange" placeholder="请选择日期范围"></DatePicker>
+                            <DatePicker @on-change="dateChange" type="daterange" placeholder="请选择日期范围" style="width: 50%"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
@@ -99,7 +99,8 @@ export default {
     data() {
         return {
             query: {
-                title: ''
+                keyword: '',
+                date: []
             },
             noteTypeList:[],
             selectNoteTyleList: [],
@@ -129,9 +130,18 @@ export default {
         },
         queryNoteData(page){
             const reqData = {
-                
+                keyword: this.query.keyword,
+                beginDate: this.query.date[0] || '',
+                endDate: this.query.date[1] || '',
+                noteType: this.selectNoteTyleList
             }
-            this.$http.post('/note/data/list',reqData).then(resp => {
+
+            if(!reqData.keyword && !reqData.beginDate && reqData.noteType.length === 0){
+                this.$Message.error('请输入搜索内容/分类/创建日期范围!')
+                return;
+            }
+            
+            this.$http.post('/note/data/query',reqData).then(resp => {
                 if(resp.data.data){
                     for(const key in resp.data.data){
                         let item = resp.data.data[key]
@@ -151,6 +161,9 @@ export default {
             }else{
                 this.selectNoteTyleList.splice(index, 1)
             }
+        },
+        dateChange(e){
+            this.query.date = e
         }
     }
 }

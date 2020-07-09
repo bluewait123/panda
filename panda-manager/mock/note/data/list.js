@@ -5,7 +5,7 @@ next(null, {
     data: [
         {
             id: 'D001',
-            noteType: '程序资料 / JAVA / SpringBoot 2.0',
+            typeName: '程序资料 / JAVA / SpringBoot 2.0',
             title: '写给 iView 开发者的一封信',
             tags: '程序资料,JAVA,SpringBoot',
             createTime: '2020-07-17 23:27:00',
@@ -13,7 +13,7 @@ next(null, {
         },
         {
             id: 'D002',
-            noteType: '程序资料 / JAVA / SpringBoot 2.0',
+            typeName: '程序资料 / JAVA / SpringBoot 2.0',
             title: '写给 iView 开发者的一封信2',
             tags: '程序资料2,JAVA2,SpringBoot2',
             createTime: '2018-07-17 23:27:00',
