@@ -30,6 +30,7 @@ response => {
     if (response.data.code && response.data.code !== '0000') {
         Vue.prototype.$Loading.error()
         if(enums.RELOGIN_CODE[response.data.code] != undefined){
+            localStorage.setItem('token', '')
             router.replace({ name: 'login' })
         }
         Vue.prototype.$Message.error('[' + response.data.system + '-' + response.data.code + '] ' + response.data.msg)

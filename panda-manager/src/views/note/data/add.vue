@@ -116,7 +116,7 @@ export default {
             this.form.html = render;
         },
         queryNoteType(){
-            this.$http.post('/note/type/list').then(resp => {
+            this.$http.get('/note/notepad/type/list').then(resp => {
                 // 格式转换成嵌套型
                 for(const key in resp.data.data){
                     let item = resp.data.data[key]
@@ -201,7 +201,7 @@ export default {
                             screenImageId: resp.data.data[0]
                         }
 
-                        this.$http.post('/note/data/add', reqData).then(resp => {
+                        this.$http.post('/note/notepad/data/add', reqData).then(resp => {
                             this.$Message.success('保存成功!')
                             this.$router.push({ name: 'note_data', params: {operType: 'removeTag'} })
                         })

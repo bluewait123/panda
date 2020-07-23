@@ -77,6 +77,15 @@ export default [
                 }
             },
             {
+                path: '/note_data_preview',
+                name: 'note_data_preview',
+                component: () => import('@/views/note/data/preview.vue'),
+                meta: {
+                    title: '笔记预览',
+                    keepAlive: false
+                }
+            },
+            {
                 path: '/main_404',
                 name: 'main_404',
                 component: () => import('@/components/error/404.vue')

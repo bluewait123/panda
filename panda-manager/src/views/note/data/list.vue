@@ -145,17 +145,16 @@ export default {
     },
     methods: {
         queryNoteData(currPage){
-            const reqData = {
+            this.$http.post('/note/notepad/data/simpleQuery', {
                 pageNum: currPage,
                 type: this.query.type,
-                status: this.query.status,
-            }
-            this.$http.post('/note/data/list', reqData).then(res => {
+                status: this.query.status
+            }).then(res => {
                 this.list = res.data.data
             })
         },
         queryNoteType(){
-            this.$http.post('/note/type/list').then(resp => {
+            this.$http.get('/note/notepad/type/list').then(resp => {
                 // 格式转换成嵌套型
                 for(const key in resp.data.data){
                     let item = resp.data.data[key]
@@ -191,13 +190,7 @@ export default {
             this.$router.push({name: 'note_data_add'})
         },
         update(id) {
-            const reqdata = {id: id}
-            this.$http.post('/system/user/info', reqdata).then(res => {
-                this.$router.push({
-                    name: 'system_user_edit',
-                    params: res.data.data
-                })
-            })
+            
         },
         advancedSearch(){
             this.$router.push({name: 'note_data_query'})

@@ -37,7 +37,7 @@
                 <ul class="dbox_ul">
                     <li v-for="(item,index) in dataList" class="dbox_li">
                         <div class=dbox_body>
-                            <div class="dbox_body_title dbox_body_item">{{item.title}}</div>
+                            <div class="dbox_body_title dbox_body_item" @click="preview(item)">{{item.title}}</div>
                             <div class="dbox_body_tag dbox_body_item">
                                 <template v-if="item.tagList" v-for="tagItem in item.tagList">
                                     <Tag color="default" >{{tagItem}}</Tag>
@@ -50,12 +50,13 @@
                             <div class="dbox_body_comment">
                                 <div>
                                     <Icon type="ios-folder-outline" />
-                                    <span>{{item.noteType}}</span>
+                                    <span>{{item.noteTypePaths}}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="dbox_img">
-                            <img src="https://dev-file.iviewui.com/tHlcBUZOSQXSTksmvhC8LXYiRDtgbbGF/small" style="width: 280px;">
+                            <!-- <img :src="item.screenImageUrl" style="width: 280px;"> -->
+                            <div :style="{'background-image': 'url('+item.screenImageUrl+')'}"></div>
                         </div>
                     </li>
                     <!-- <li class="dbox_li">
@@ -113,7 +114,7 @@ export default {
     },
     methods: {
         queryNoteType(){
-            this.$http.post('/note/type/list').then(resp => {
+            this.$http.get('/note/notepad/type/list').then(resp => {
                 // 格式转换成嵌套型
                 let temp = {}
                 for(const key in resp.data.data){
@@ -141,7 +142,7 @@ export default {
                 return;
             }
             
-            this.$http.post('/note/data/query',reqData).then(resp => {
+            this.$http.post('/note/notepad/data/multipleQuery',reqData).then(resp => {
                 if(resp.data.data){
                     for(const key in resp.data.data){
                         let item = resp.data.data[key]
@@ -149,8 +150,9 @@ export default {
                             let str = new String(item.tags)
                             item['tagList'] = str.split(',')
                         }
-                        this.dataList.push(item)
+                        
                     }
+                    this.dataList = resp.data.data
                 }
             })
         },
@@ -164,6 +166,14 @@ export default {
         },
         dateChange(e){
             this.query.date = e
+        },
+        preview(item){
+            this.$router.push({
+                name: 'note_data_preview',
+                params: {
+                    id: item.id
+                }
+            })
         }
     }
 }
@@ -224,6 +234,13 @@ export default {
     .dbox_body_comment div span{
         color: #635f5f;
         margin-left: 5px;
+        
+    }
+
+    .dbox_img div{
+        width: 280px;
+        height:180px;
+        background-size: 280px;
     }
     
 </style>

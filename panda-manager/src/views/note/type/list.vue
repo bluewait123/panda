@@ -156,7 +156,7 @@ export default {
             ]);
         },
         queryList(){
-            this.$http.post('/note/type/list').then(resp => {
+            this.$http.get('/note/notepad/type/list').then(resp => {
                 // 格式转换成嵌套型
                 for(const key in resp.data.data){
                     let item = resp.data.data[key]
@@ -202,7 +202,7 @@ export default {
                     parentId: this.activationTarget.id
                 }
 
-                this.$http.post('/note/type/add', reqData).then(resp => {
+                this.$http.post('/note/notepad/type/add', reqData).then(resp => {
                     const respData = resp.data.data
                     const children = this.activationTarget.children || [];
                     children.push({

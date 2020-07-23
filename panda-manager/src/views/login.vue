@@ -49,11 +49,12 @@ export default {
                 if (valid) {
                     const userName = this.info.userName
                     const encryptionPwd = md5.getMD5BySalt(this.info.password,userName)
-                    const reqData = {
-                        userName: userName,
-                        pwd: encryptionPwd
-                    }
-                    this.$http.post('/system/login', reqData).then(resp => {
+                    this.$http.get('/system/login', {
+                        params: {
+                            userName: userName,
+                            pwd: encryptionPwd
+                        }
+                    }).then(resp => {
                         localStorage.clear()
                         const respData = resp.data.data
                         this.setCache(respData)
