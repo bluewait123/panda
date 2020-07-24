@@ -72,6 +72,7 @@ export default {
                 },
                 {title: '操作', key: 'oper', width: 250, align: 'center',
                     render: (h, params) => {
+                        let vm = this
                         return [
                             h('Button', {
                                 props:{
@@ -80,7 +81,7 @@ export default {
                                 },
                                 on:{
                                     'click': function(){
-                                        
+                                        vm.preview(params.row.id)
                                     }
                                 },
                                 style:{
@@ -194,6 +195,14 @@ export default {
         },
         advancedSearch(){
             this.$router.push({name: 'note_data_query'})
+        },
+        preview(noteId){
+            this.$router.push({
+                name: 'note_data_preview',
+                params: {
+                    id: noteId
+                }
+            })
         }
     }
 }

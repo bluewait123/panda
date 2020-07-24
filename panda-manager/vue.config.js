@@ -34,15 +34,15 @@ if (process.env.npm_config_proxydev) {
         //     }
         // }
         '/mock/system': {
-            target: 'http://127.0.0.1:12301/boss/',
-            // target: 'http://127.0.0.1:8080/',
+            target: 'http://120.79.216.133/',
+            // target: 'http://127.0.0.1:12301/boss/',
             changeOrigin: true,
             pathRewrite: {
                 '^/mock': ''
             }
         },
         '/mock/note': {
-            target: 'http://127.0.0.1:12302/boss/',
+            target: 'http://120.79.216.133/',
             // target: 'http://127.0.0.1:8080/',
             changeOrigin: true,
             pathRewrite: {
@@ -50,7 +50,7 @@ if (process.env.npm_config_proxydev) {
             }
         },
         '/mock/file': {
-            target: 'http://127.0.0.1:12401/',
+            target: 'http://120.79.216.133/',
             // target: 'http://127.0.0.1:8080/',
             changeOrigin: true,
             pathRewrite: {
