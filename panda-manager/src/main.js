@@ -9,6 +9,8 @@ import x2js from 'x2js' //xml数据处理插件
 import rule from './utils/rule'
 import enums from './constant/enums'
 import cascaderMulti from "cascader-multi"
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 import './index.less'
 
 Vue.config.productionTip = false
@@ -16,6 +18,7 @@ Vue.config.productionTip = false
 // 绑定
 Vue.use(ViewUI)
 Vue.use(cascaderMulti)
+Vue.use(mavonEditor)
 
 // 注入公共变量
 Vue.prototype.$http = axios
