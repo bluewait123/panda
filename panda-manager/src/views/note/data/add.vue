@@ -12,15 +12,15 @@
                 <Row>
                     <Col>
                         <FormItem label="笔记种类">
-                            <cascaderMulti @on-change="selectNoteTypeChange" :data="noteTypeList" placeholder="请选择笔记种类"></cascaderMulti>
+                            <Cascader :data="noteTypeList" change-on-select placeholder="请选择笔记种类" v-model="form.type"></Cascader>
                         </FormItem>
                     </Col>
                 </Row>
                  <Row :gutter="20">
                     <Col>
                         <FormItem label="标签">
-                            <Input v-model="form.tag" @on-blur="addTag" placeholder="请输入标签"></Input>
-                            <Tag color="primary" v-for="(item,index) in form.tags" :key="item+index" :name="item" closable @on-close="removeTag">{{item}}</Tag>
+                            <Input v-model="form.tag" @on-keyup="addTag" placeholder="请输入标签，Enter增加标签"></Input>
+                            <Tag color="default" v-for="(item,index) in form.tags" :key="item+index" :name="item" closable @on-close="removeTag">{{item}}</Tag>
                         </FormItem>
                     </Col>
                 </Row>
@@ -54,7 +54,7 @@ export default {
             form:{
                 title: '',
                 tags: [],
-                type: '',
+                type: [],
                 tag: '',
                 content:'', // 输入的markdown
                 html:'',    // 及时转的html
@@ -163,14 +163,11 @@ export default {
             }
         },
         setChildItem(item){
-            return {label: item.typeName , multiple: false, children: item.childrens,  typeStatus:item.status, value: item.id}
+            return {label: item.typeName, children: item.childrens, disabled:item.status === '0', value: item.id}
         },
-        selectNoteTypeChange(data){
-            this.form.type = data[data.length-1] || ''
-        },
-        addTag(){
+        addTag(event){
             const tagName = this.form.tag;
-            if(tagName !== ''){
+            if(tagName.trim() !== '' && event.key === 'Enter'){
                 if(this.form.tags.indexOf(tagName) < 0){
                     this.form.tags.push(tagName);
                 }
@@ -217,7 +214,7 @@ export default {
                         files: [url]
                     }).then(resp => {
                         const reqData = {
-                            noteType: this.form.type,
+                            noteType: this.form.type[this.form.type.length -1],
                             title: this.form.title,
                             tags: this.form.tags.toString(),
                             data: this.form.content,

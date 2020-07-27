@@ -5,7 +5,7 @@
                 <Row :gutter="20">
                     <Col span="8">
                         <FormItem label="笔记种类">
-                            <cascaderMulti @on-change="selectNoteTypeChange" :data="noteTypeList" placeholder="请选择笔记种类"></cascaderMulti>
+                            <Cascader :data="noteTypeList" change-on-select placeholder="请选择笔记种类" v-model="query.type"></Cascader>
                         </FormItem>
                     </Col>
                     <Col span="8">
@@ -43,7 +43,7 @@ export default {
             NOTE_TYPE_STATUS:this.$enums.NOTE_TYPE_STATUS,
             noteTypeList:[],
             query:{
-                type: '',
+                type: [],
                 status: ''
             },
             list: [],
@@ -179,10 +179,7 @@ export default {
             }
         },
         setChildItem(item){
-            return {label: item.typeName , multiple: false, children: item.childrens,  typeStatus:item.status, value: item.id}
-        },
-        selectNoteTypeChange(data){
-            this.query.type = data[data.length-1] || ''
+            return {label: item.typeName, children: item.childrens, disabled:item.status === '0', value: item.id}
         },
         pageChange(currPage) {
             queryNoteData(currPage)
