@@ -1,97 +1,67 @@
 <template>
-    <section>
-        <div style="text-align: center; width:100%; display: table;">
-            
-        </div>
-        <Card style="margin-top:10px">
-            <Form ref="query" :model="query" :label-width="80" label-position="right" label-colon>
-                <Row :gutter="20">
-                    <Col>
-                        <FormItem label="">
-                            <Input v-model="query.keyword" search enter-button="搜索" placeholder="请输入标题/标签/内容关键字" size="large" style="width: 90%;" @on-search="queryNoteData(1)" />
-                        </FormItem>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <FormItem label="分类">
-                            <div v-for="(item,index) in noteTypeList">
-                                <Tag :style="{'cursor': 'pointer'}" v-for="(item,index) in item" :name="item.id" :key="item.id" size="medium" color="primary" checkable :checked="false" @on-change="selectNoteType">
-                                    {{item.typeName}}
-                                </Tag>
-                            </div>
-                        </FormItem>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col >
-                        <FormItem label="创建日期">
-                            <DatePicker @on-change="dateChange" type="daterange" placeholder="请选择日期范围" style="width: 50%"></DatePicker>
-                        </FormItem>
-                    </Col>
-                </Row>
-            </Form>
-        </Card>
-        <Card v-if="dataList.length > 0" style="margin-top:10px">
-            <div class="data_box">
-                <ul class="dbox_ul">
-                    <li v-for="(item,index) in dataList" class="dbox_li">
-                        <div class=dbox_body>
-                            <div class="dbox_body_title dbox_body_item" @click="preview(item)">{{item.title}}</div>
-                            <div class="dbox_body_tag dbox_body_item">
-                                <template v-if="item.tagList" v-for="tagItem in item.tagList">
-                                    <Tag color="default" >{{tagItem}}</Tag>
-                                </template>
-                            </div>
-                            <div class="dbox_body_text dbox_body_item">{{item.data}}</div>
-                            <div class="dbox_body_time dbox_body_item">
-                                发表于 <span style="color:rgb(142, 138, 138)">{{item.createTime}}</span>
-                            </div>
-                            <div class="dbox_body_comment">
-                                <div>
-                                    <Icon type="ios-folder-outline" />
-                                    <span>{{item.noteTypePaths}}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dbox_img">
-                            <!-- <img :src="item.screenImageUrl" style="width: 280px;"> -->
-                            <div :style="{'background-image': 'url('+item.screenImageUrl+')'}"></div>
-                        </div>
-                    </li>
-                    <!-- <li class="dbox_li">
-                        <div class=dbox_body>
-                            <div class="dbox_body_title dbox_body_item">写给 iView 开发者的一封信</div>
-                            <div class="dbox_body_tag dbox_body_item">
-                                <Tag color="default" >程序资料</Tag>
-                                <Tag color="default" >JAVA</Tag>
-                                <Tag color="default" >SpringBoot 2.0</Tag>
-                            </div>
-                            <div class="dbox_body_text dbox_body_item">你好，亲爱的 iView 开发者（准开发者），很高兴你能使用到我们新上线的 iView 开发者社区。iView 从立项到现在已经经历了两年的时间，7 月 28 日是它两周岁的生日，在这一天，我们荣幸的召开了新品发布会并发布了 iView 3.0。对于初入社区的你，这篇文章将是一个很好的导引，下面就带你玩转 iView Developer</div>
-                            <div class="dbox_body_time dbox_body_item">
-                                发表于 <span style="color:rgb(142, 138, 138)">2018-07-17 23:27:00</span>
-                            </div>
-                            <div class="dbox_body_comment">
-                                <div>
-                                    <Icon type="ios-star-outline" />
-                                    <span>1100</span>
-                                </div>
-                                <div><Icon type="ios-thumbs-up-outline" />1100</div>
-                                <div><Icon type="ios-chatbubbles-outline" />1100</div>
-                            </div>
-                        </div>
-                        <div class="dbox_img">
-                            <img src="https://dev-file.iviewui.com/tHlcBUZOSQXSTksmvhC8LXYiRDtgbbGF/small" style="width: 280px;">
-                        </div>
-                    </li> -->
-                </ul>
-            </div>
-            <div v-if="loadMore" class="text-center">
-                <Button @click="">加载更多</Button>
+    <div>
+        <Card>
+            <div style="padding:5px 50px 5px 50px;">
+                <Input v-model="query.keyword" search enter-button="搜索" placeholder="请输入标题/标签/内容关键字" size="large"  @on-search="queryNoteData(1)" />
+                <Tag style="margin-top:10px;font-weight: bold;" color="success">标签 </Tag>
+                <Tag :style="{'cursor': 'pointer','margin-top':'10px'}" v-for="(item,index) in tagData" :name="item.name" :key="item.name" size="default" :color="item.color" @click.native="selectTagChange(item)">
+                    {{item.name}}
+                </Tag>
             </div>
         </Card>
-    </section>
-    
+        <section style="margin-top:10px">
+            <Row>
+                <Col span="4">
+                     <Card shadow >
+                        <Tree class="note_type_tree_box" :data="noteTypeData" :render="renderContent" @on-select-change="selectNoteType"></Tree>
+                    </Card>
+                </Col>
+                <Col span="20">
+                    <Card style="margin-left:10px">
+                        <span v-if="dataList.length === 0">暂无数据</span>
+                        <div class="folder_title" v-if="dataList.length > 0">
+                            <div class="folder_title_icon"></div>
+                            <div class="folder_title_text">{{folderTitle}}</div>
+                            <div class="folder_share" v-show="shareFlag"><Button type="primary" size="small" icon="md-share">分享</Button></div>
+                        </div>
+                        <div class="data_box">
+                            <ul class="dbox_ul">
+                                <li v-for="(item,index) in dataList" class="dbox_li">
+                                    <div class=dbox_body>
+                                        <div class="dbox_body_title dbox_body_item">
+                                            <span style="cursor: pointer;" @click="preview(item)">{{item.title}}</span>
+                                        </div>
+                                        <div class="dbox_body_tag dbox_body_item">
+                                            <template v-if="item.tagList" v-for="tagItem in item.tagList">
+                                                <Tag color="default" >{{tagItem}}</Tag>
+                                            </template>
+                                        </div>
+                                        <div class="dbox_body_text dbox_body_item">{{item.data}}</div>
+                                        <div class="dbox_body_time dbox_body_item">
+                                            发表于 <span style="color:rgb(142, 138, 138)">{{item.createTime}}</span>
+                                        </div>
+                                        <div class="dbox_body_comment">
+                                            <div>
+                                                <Icon type="ios-folder-outline" />
+                                                <span>{{item.noteTypePathsName}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dbox_img">
+                                        <!-- <img :src="item.screenImageUrl" style="width: 280px;"> -->
+                                        <div @click="preview(item)" :style="{'background-image': 'url('+item.screenImageUrl+')', 'cursor': 'pointer'}"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-if="loadMore" class="text-center">
+                            <Button @click="">加载更多</Button>
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
+        </section>
+    </div>
 </template>
 
 <script>
@@ -101,68 +71,153 @@ export default {
         return {
             query: {
                 keyword: '',
-                date: []
+                date: [],
+                noteType: {}
             },
-            noteTypeList:[],
-            selectNoteTyleList: [],
+            tagData:[],
+            selectTagList: [],
             dataList:[],
-            loadMore: false
+            loadMore: false,
+            noteTypeData:[
+                {
+                    title: '笔记类型列表',
+                    expand: true,
+                    render: (h, { root, node, data }) => {
+                        return h('span', {
+                            style: {
+                                display: 'inline-block',
+                                width: '100%'
+                            }
+                        }, [
+                            h('span', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'ios-folder-outline'
+                                    },
+                                    style: {
+                                        marginRight: '8px'
+                                    }
+                                }),
+                                h('span', data.title)
+                            ])
+                        ])
+                    },
+                    children: []
+                }
+            ],
+            folderTitle: '',
+            shareFlag: false
         }
     },
     created () {
         this.queryNoteType()
+        this.queryNoteTag()
     },
     methods: {
-        queryNoteType(){
-            this.$http.get('/note/notepad/type/list').then(resp => {
-                // 格式转换成嵌套型
-                let temp = {}
-                for(const key in resp.data.data){
-                    let item = resp.data.data[key]
-                    let target = temp[item.level] || []
-                    target.push(item)
-                    temp[item.level] = target
-                }
-
-                for(const k in temp){
-                    this.noteTypeList.push(temp[k])
+        queryNoteTag(){
+            this.$http.get('/note/notepad/data/tags').then(resp => {
+                if(resp.data.data){
+                    resp.data.data.map(item => {
+                        this.tagData.push({name: item, select: false, color: 'default'})
+                    })
                 }
             })
         },
+        queryNoteType(){
+            this.$http.get('/note/notepad/type/list').then(resp => {
+                // 格式转换成嵌套型
+                for(const key in resp.data.data){
+                    let item = resp.data.data[key]
+                    if(item.parentId === null || item.parentId === ''){
+                        let {...cloneItem} = item
+                        cloneItem['childrens'] = []
+                        this.getChildItem(cloneItem,resp.data.data)
+                        this.noteTypeData[0].children.push(this.setChildItem(cloneItem))
+                    }
+                }
+            })
+        },
+        getChildItem(child,data){
+            for(const key in data){
+                let item = data[key]
+                if(item.parentId === child.id){
+                    item['childrens'] = []
+                    child.childrens.push(this.setChildItem(item))
+                    this.getChildItem(item,data)
+                }
+            }
+        },
+        setChildItem(item){
+            return {title: item.typeName , expand: true, children: item.childrens,  typeStatus:item.status, id: item.id, isLoading: false}
+        },
         queryNoteData(page){
-            const reqData = {
+            let tags = []
+            this.tagData.map(item => {
+                if(item.select){
+                    tags.push(item.name)
+                }
+            })
+            this.$http.post('/note/notepad/data/multipleQuery',{
                 keyword: this.query.keyword,
-                beginDate: this.query.date[0] || '',
-                endDate: this.query.date[1] || '',
-                noteType: this.selectNoteTyleList
-            }
-
-            if(!reqData.keyword && !reqData.beginDate && reqData.noteType.length === 0){
-                this.$Message.error('请输入搜索内容/分类/创建日期范围!')
-                return;
-            }
-            
-            this.$http.post('/note/notepad/data/multipleQuery',reqData).then(resp => {
-                if(resp.data.data){
-                    for(const key in resp.data.data){
-                        let item = resp.data.data[key]
+                tags: tags
+            }).then(resp => {
+                let list = resp.data.data.list
+                let types = resp.data.data.types
+                if(list){
+                    for(const key in list){
+                        let item = list[key]
                         if(item && item.tags){
                             let str = new String(item.tags)
                             item['tagList'] = str.split(',')
                         }
-                        
                     }
-                    this.dataList = resp.data.data
                 }
+
+                // 笔记类型格式转换成嵌套型
+                if(types){
+                    this.noteTypeData[0].children = []
+                    for(const key in types){
+                        let item = types[key]
+                        if(item.parentId === null || item.parentId === ''){
+                            let {...cloneItem} = item
+                            cloneItem['childrens'] = []
+                            this.getChildItem(cloneItem,types)
+                            this.noteTypeData[0].children.push(this.setChildItem(cloneItem))
+                        }
+                    }
+                }
+                this.shareFlag = false
+                this.dataList = list || []
+                this.folderTitle = '文章列表'
             })
         },
-        selectNoteType(checked, name){
-            const index = this.selectNoteTyleList.indexOf(name)
-            if(index === -1){
-                this.selectNoteTyleList.push(name)
-            }else{
-                this.selectNoteTyleList.splice(index, 1)
-            }
+        selectNoteType(data,item){
+            this.query.noteType = item
+            this.queryNoteDataByType(1)
+        },
+        queryNoteDataByType(page){
+            this.$http.post('/note/notepad/data/queryByNoteType',{
+                noteType: this.query.noteType.id
+            }).then(resp => {
+                let list = resp.data.data
+                if(list){
+                    for(const key in list){
+                        let item = list[key]
+                        if(item && item.tags){
+                            let str = new String(item.tags)
+                            item['tagList'] = str.split(',')
+                        }
+                    }
+                }
+
+                this.shareFlag = true
+                this.dataList = list || []
+                this.folderTitle = this.query.noteType.title + '列表'
+            })
+        },
+        selectTagChange(item){
+            item.color = item.select ? 'default' : 'primary'
+            item.select = !item.select
         },
         dateChange(e){
             this.query.date = e
@@ -174,6 +229,34 @@ export default {
                     id: item.id
                 }
             })
+        },
+        renderContent(h, { root, node, data }){
+            let vm = this
+            return h('span', {
+                style: {
+                    display: 'inline-block',
+                    width: '100%'
+                }
+            }, [
+                h('span', [
+                    h('Icon', {
+                        props: {
+                            type: 'ios-folder-outline'
+                        },
+                        style: {
+                            marginRight: '8px'
+                        }
+                    }),
+                    h('span',data.title),
+                ]),
+                h('span', {
+                    style: {
+                        display: 'inline-block',
+                        float: 'right',
+                        marginRight: '32px'
+                    }
+                })
+            ])
         }
     }
 }
@@ -215,7 +298,6 @@ export default {
     .dbox_body_title{
         color: #515a6e;
         transition: all .2s;
-        cursor: pointer;
         font-weight: 500;
         font-size: 16px;
         line-height: 24px;
@@ -241,6 +323,33 @@ export default {
         width: 280px;
         height:180px;
         background-size: 280px;
+    }
+
+    .note_type_tree_box{
+        overflow-x:scroll;
+    }
+
+    .folder_title{
+        display: flex;
+    }
+
+    .folder_title_icon{
+        height: 30px;
+        float: left;
+        border-left: 3px solid #2395f1;
+        display: flex;
+    }
+
+    .folder_title_text{
+        margin-left: 10px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .folder_share{
+        position:absolute;
+        right: 0;
+        margin-right: 10px;
     }
     
 </style>
