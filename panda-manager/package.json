@@ -9,7 +9,7 @@
     "test": "vue-cli-service build --mode test"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cascader-multi": "^2.0.3",
     "core-js": "^3.6.4",
     "crypto": "^1.0.1",
